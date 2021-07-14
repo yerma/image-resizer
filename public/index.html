@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="css/style.css" />
+  <title>Image Resizer</title>
+</head>
+<body>
+  <header>
+    <h1>Image Resizer</h1>
+  </header>
+  <main>
+    <form class="flex-container" action="/api/resize" method="GET">
+      <section class="flex-col--2">
+        <h2>Select an image</h2>
+        <div id="js-images" class="image-grid"></div>
+      </section>
+      <section class="flex-col--1">
+        <fieldset>
+          <legend>Output Options</legend>
+          <div class="form-field">
+            <label class="form-field__label" for="width">Width</label>
+            <input class="form-field__input" type="text" name="width" id="width" required>
+          </div>
+          <div class="form-field">
+            <label class="form-field__label" for="height">Height</label>
+            <input class="form-field__input" type="text" name="height" id="height" required>
+          </div>
+          <div class="form-field">
+            <label class="form-field__label" for="format">Format</label>
+            <div class="form-field__radio-group">
+              <label class="form-field__label--radio" for="jpg">
+                <input class="form-field__input--radio" type="radio" name="format" id="jpg" value="jpg" checked>
+                jpg
+              </label>
+              <label class="form-field__label--radio" for="png">
+                <input class="form-field__input--radio" type="radio" name="format" id="png" value="png">
+                png
+              </label>
+              <label class="form-field__label--radio" for="webp">
+                <input class="form-field__input--radio" type="radio" name="format" id="webp" value="webp">
+                webp
+              </label>
+            </div>
+          </div>
+        </fieldset>
+        <div class="form-field">
+          <button class="form-field__submit form-field__submit--solid" type="submit">Resize Image</button>
+        </div>
+      </section>
+    </form>
+    <section class="image-upload">
+      <form class="flex-container" action="/api/upload" method="POST" enctype="multipart/form-data">
+        <h2>...or upload your own image</h2>
+        <input class="form-field__input form-field__input--file" type="file" name="file" id="file"
+          accept="image/png, image/jpeg, image/webp" required>
+        <button class="form-field__submit form-field__submit--outline" type="submit">Upload image</button>
+      </form>
+    </section>
+  </main>
+  <footer>
+    <p>Yermain Araya | 2021</p>
+  </footer>
+
+  <script>
+    const loadImages = async (container) => {
+      const response = await fetch('/api/images');
+      const images = await response.json()
+
+      const imagesFragment = images.reduce((fragment, { filename, src }) => {
+        const label = document.createElement('label')
+        const img = document.createElement('img')
+        const input = document.createElement('input')
+        
+        input.value = input.id = filename
+        input.type = 'radio'
+        input.name = 'filename'
+        img.src = src
+        img.alt = filename
+        label.append(input, img)
+        fragment.append(label)
+        return fragment
+      }, document.createDocumentFragment())
+
+      container.append(imagesFragment)
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const imagesContainer = document.getElementById('js-images')
+      loadImages(imagesContainer)
+    })
+  </script>
+</body>
+</html>

@@ -1,30 +1,27 @@
 import { promises as fs } from 'fs';
+import path from 'path';
 import sharp from 'sharp';
 
-export const getImageFileMatch = async (
-  filename: string
-): Promise<string | undefined> => {
-  const files = await fs.readdir('./images/');
-  const filenameRegex = new RegExp(`${filename}\.(jpg|png|webp)`);
-  return files.find((file) => filenameRegex.test(file));
-};
+export type ImageFormat = 'jpg' | 'png' | 'webp';
 
-export const resizeImage = async (
+const resizeImage = async (
   filename: string,
-  width: string,
-  height: string
+  width: number,
+  height: number,
+  format: ImageFormat = 'jpg'
 ): Promise<string> => {
-  const fileMatch = await getImageFileMatch(filename);
-  if (!fileMatch) throw new Error('File not found');
-
-  const original = await sharp(`./images/${fileMatch}`);
-  const newFilename = `./resized/${filename}-${width}x${height}.jpg`;
+  const { name } = path.parse(filename);
+  const newFilename = `public/resized/${name}-${width}x${height}.${format}`;
   try {
-    await original
-      .resize(parseInt(width), parseInt(height))
+    await sharp(`public/original/${filename}`)
+      .resize(width, height)
       .toFile(newFilename);
     return newFilename;
   } catch (e) {
-    throw new Error('Error while resizing: ' + e.message);
+    throw new Error(`Error while resizing: ${e.message}`);
   }
+};
+
+export default {
+  resizeImage
 };
