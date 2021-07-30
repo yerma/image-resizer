@@ -1,3 +1,4 @@
-node_modules
-dist
-resized/*
+node_modules/
+dist/
+public/resized/*
+!public/resized/.gitkeep
