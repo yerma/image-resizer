@@ -1,12 +1,28 @@
 import { promises as fs } from 'fs';
+import { RequestHandler } from 'express';
 import supertest from 'supertest';
-import app from '../index';
+import sinon from 'sinon';
+import multer from 'multer';
+import * as middleware from '../routes/middleware';
 
+const singleUploadStub =
+  (_: string): RequestHandler =>
+  (req, _, next) => {
+    req.file = {} as Express.Multer.File;
+    next();
+  };
+
+sinon
+  .stub(middleware, 'multerUpload')
+  .callsFake(() => ({ single: singleUploadStub } as multer.Multer));
+
+import app from '../index';
 const request = supertest(app);
+
 const fileContent =
   'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+ip1sAAAAASUVORK5CYII=';
 
-describe('Routes specs', () => {
+describe('Router specs', () => {
   beforeAll(async () => {
     await fs.writeFile('public/original/test.jpg', fileContent, 'base64');
   });
@@ -36,6 +52,16 @@ describe('Routes specs', () => {
       const response = await request.get('/api/images');
       expect(response.status).toBe(200);
       expect(response.body.length).toBeGreaterThanOrEqual(1);
+    });
+  });
+
+  describe('POST /api/upload', () => {
+    it('should upload test image to original folder', async () => {
+      const response = await request
+        .post('/api/upload')
+        .attach('file', 'src/tests/fixtures/upload.jpg');
+      expect(response.status).toBe(302);
+      expect(response.headers.location).toEqual('/');
     });
   });
 });
