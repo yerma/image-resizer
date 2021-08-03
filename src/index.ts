@@ -1,20 +1,10 @@
-import path from 'path';
 import express from 'express';
-import routes from './routes';
+import routes, { logger } from './routes';
 
 const app = express();
 const port = 3000;
 
 app.use(express.static('public'));
-
-const logger = (
-  req: express.Request,
-  res: express.Response,
-  next: express.NextFunction
-) => {
-  console.log(`${req.method} request on ${req.originalUrl}`);
-  next();
-};
 
 app.use('/api', logger, routes);
 

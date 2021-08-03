@@ -1,6 +1,7 @@
 import { promises as fs } from 'fs';
 import path from 'path';
 import sharp from 'sharp';
+import { convertedFilePath } from '../util/fileManager';
 
 export type ImageFormat = 'jpg' | 'png' | 'webp';
 
@@ -11,7 +12,8 @@ const resizeImage = async (
   format: ImageFormat = 'jpg'
 ): Promise<string> => {
   const { name } = path.parse(filename);
-  const newFilename = `public/resized/${name}-${width}x${height}.${format}`;
+  const newFilename = convertedFilePath(name, width, height, format);
+
   try {
     await sharp(`public/original/${filename}`)
       .resize(width, height)

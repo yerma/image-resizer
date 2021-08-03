@@ -1,26 +1,17 @@
 import express from 'express';
 import path from 'path';
-import multer from 'multer';
+import { listOriginalImages } from '../util/fileManager';
 import resizer, { ImageFormat } from '../resizer';
-import fileManager from '../util/fileManager';
+import { useCache, logger, multerUpload } from './middleware';
 
 const router = express.Router();
-const upload = multer({
-  storage: multer.diskStorage({
-    destination: (_req, _file, cb) => cb(null, 'public/original/'),
-    filename: (_req, file, cb) => {
-      const { name, ext } = path.parse(file.originalname);
-      cb(null, `${name}-${Date.now()}${ext}`);
-    }
-  })
-});
 
 router.get('/images', async (_req, res) => {
-  const images = await fileManager.listOriginalImages();
+  const images = await listOriginalImages();
   res.status(200).json(images);
 });
 
-router.get('/resize', async (req, res) => {
+router.get('/resize', useCache, async (req, res) => {
   const { filename, width, height, format } = req.query;
   try {
     const resizedFile = await resizer.resizeImage(
@@ -35,10 +26,13 @@ router.get('/resize', async (req, res) => {
   }
 });
 
-router.post('/upload', upload.single('file'), (req, res) => {
+router.post('/upload', multerUpload().single('file'), (req, res) => {
   if (req.file) {
-    res.status(200).redirect('/');
+    res.redirect('/');
+  } else {
+    res.status(400).send('No file in request');
   }
 });
 
 export default router;
+export { logger };
