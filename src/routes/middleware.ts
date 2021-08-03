@@ -9,7 +9,7 @@ export const logger = (
   req: express.Request,
   res: express.Response,
   next: express.NextFunction
-) => {
+): void => {
   console.log(`${req.method} request on ${req.originalUrl}`);
   next();
 };
@@ -18,7 +18,7 @@ export const useCache = async (
   req: express.Request,
   res: express.Response,
   next: express.NextFunction
-) => {
+): Promise<void> => {
   const { filename, width, height, format } = req.query;
   const { name } = path.parse(filename as string);
   const convertedFilename = convertedFilePath(
@@ -36,7 +36,7 @@ export const useCache = async (
   }
 };
 
-export const multerUpload = () =>
+export const multerUpload = (): multer.Multer =>
   multer({
     storage: multer.diskStorage({
       destination: (_req, _file, cb) => cb(null, 'public/original/'),

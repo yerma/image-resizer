@@ -5,16 +5,14 @@ import sinon from 'sinon';
 import multer from 'multer';
 import * as middleware from '../routes/middleware';
 
-const singleUploadStub =
-  (_: string): RequestHandler =>
-  (req, _, next) => {
-    req.file = {} as Express.Multer.File;
-    next();
-  };
+const singleUploadStub = (): RequestHandler => (req, _, next) => {
+  req.file = {} as Express.Multer.File;
+  next();
+};
 
 sinon
   .stub(middleware, 'multerUpload')
-  .callsFake(() => ({ single: singleUploadStub } as multer.Multer));
+  .callsFake(() => ({ single: singleUploadStub } as unknown as multer.Multer));
 
 import app from '../index';
 const request = supertest(app);

@@ -27,4 +27,4 @@ export const convertedFilePath = (
   width: string | number,
   height: string | number,
   format: ImageFormat = 'jpg'
-) => `public/resized/${name}-${width}x${height}.${format}`;
+): string => `public/resized/${name}-${width}x${height}.${format}`;
