@@ -1,10 +1,13 @@
 {
   "root": true,
+  "parser": "@typescript-eslint/parser",
   "plugins": [
+    "@typescript-eslint",
     "prettier"
   ],
   "extends": [
     "eslint:recommended",
+    "plugin:@typescript-eslint/recommended",
     "prettier"
   ],
   "rules": {
@@ -14,7 +17,8 @@
     "prefer-const": "error"
   },
   "parserOptions": {
-    "ecmaVersion": 2017
+    "ecmaVersion": 2017,
+    "sourceType": "module"
   },
   "env": {
     "node": true,
