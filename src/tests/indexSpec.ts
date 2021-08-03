@@ -32,14 +32,14 @@ describe('Router specs', () => {
   describe('GET /api/resize', () => {
     it('responds with status 200 if found', async () => {
       const response = await request.get(
-        '/api/resize?filename=test.jpg&width=200&height=200'
+        '/api/resize?filename=test.jpg&width=200&height=200&format=png'
       );
       expect(response.status).toBe(200);
     });
 
     it('responds with status 500 if file not found', async () => {
       const response = await request.get(
-        '/api/resize?filename=not-found&width=200&height=200'
+        '/api/resize?filename=not-found.jpg&width=200&height=200&format=png'
       );
       expect(response.status).toBe(500);
     });

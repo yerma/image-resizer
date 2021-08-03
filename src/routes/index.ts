@@ -1,6 +1,7 @@
 import express from 'express';
 import path from 'path';
 import { listOriginalImages } from '../util/fileManager';
+import { validateParams } from '../util/validator';
 import resizer, { ImageFormat } from '../resizer';
 import { useCache, logger, multerUpload } from './middleware';
 
@@ -13,6 +14,10 @@ router.get('/images', async (_req, res) => {
 
 router.get('/resize', useCache, async (req, res) => {
   const { filename, width, height, format } = req.query;
+
+  const { valid, errors } = validateParams({ filename, width, height, format });
+  if (!valid) return res.status(400).send(errors);
+
   try {
     const resizedFile = await resizer.resizeImage(
       filename as string,
