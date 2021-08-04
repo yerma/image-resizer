@@ -9,7 +9,7 @@ export const validateParams = (
   errors: string;
 } => {
   const errorMessages: string[] = [];
-  Object.entries(args).forEach(([field, value]) => {
+  Object.entries(args).forEach(([field, value]): void => {
     if (!value) {
       errorMessages.push(`Field "${field}" cannot be empty.`);
     }

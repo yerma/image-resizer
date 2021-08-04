@@ -8,18 +8,22 @@ export interface ImageObject {
 
 export const listOriginalImages = async (): Promise<ImageObject[]> => {
   const images = await fs.readdir('public/original');
-  return images.map((filename) => ({
-    filename,
-    src: `original/${filename}`
-  }));
+  return images.map(
+    (filename: string): ImageObject => ({
+      filename,
+      src: `original/${filename}`
+    })
+  );
 };
 
 export const listResizedImages = async (): Promise<ImageObject[]> => {
   const images = await fs.readdir('public/original');
-  return images.map((filename) => ({
-    filename,
-    src: `original/${filename}`
-  }));
+  return images.map(
+    (filename: string): ImageObject => ({
+      filename,
+      src: `original/${filename}`
+    })
+  );
 };
 
 export const convertedFilePath = (

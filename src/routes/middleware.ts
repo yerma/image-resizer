@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { Request } from 'express';
 import path from 'path';
 import multer from 'multer';
 import { promises as fs, constants } from 'fs';
@@ -39,8 +39,16 @@ export const useCache = async (
 export const multerUpload = (): multer.Multer =>
   multer({
     storage: multer.diskStorage({
-      destination: (_req, _file, cb) => cb(null, 'public/original/'),
-      filename: (_req, file, cb) => {
+      destination: (
+        _req: Request,
+        _file: Express.Multer.File,
+        cb: (error: Error | null, destination: string) => void
+      ): void => cb(null, 'public/original/'),
+      filename: (
+        _req: Request,
+        file: Express.Multer.File,
+        cb: (error: Error | null, destination: string) => void
+      ): void => {
         const { name, ext } = path.parse(file.originalname);
         cb(null, `${name}-${Date.now()}${ext}`);
       }
